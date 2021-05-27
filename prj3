@@ -1,0 +1,302 @@
+package prj3;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+
+import java.io.*;
+
+import javax.swing.JOptionPane;
+
+
+abstract class abstractEvent{
+	
+	public abstract void addToEvent_Details(Event p);
+    
+    public abstract void removeFromEvent_Details(Event p); 
+	    abstract public void emptyEvent_Details();        
+    
+}
+class Event{
+    Integer Event_Id;
+    String Event_name;          
+    Float price;
+    Integer EventQuantity; 
+    String TimeEvent;
+    String name1;
+    String contact;
+    String date1;
+    public Event() {
+    }
+    
+    public Event(Integer Event_Id) {
+        this.Event_Id = Event_Id;
+    }
+    public Integer getEvent_Id() {
+        return Event_Id;
+    }
+    public void setEvent_Id(Integer Event_Id) {
+        this.Event_Id = Event_Id;
+    }
+    public String getEvent_name() {
+        return Event_name;
+    }
+    public void setEvent_name(String Event_name) {
+        this.Event_name = Event_name;
+    }
+    public Float getPrice() {
+        return price;
+    }
+    public void setPrice(double p) {
+        this.price = (float) p;
+    }
+    public Integer getEventQuantity() {
+        return EventQuantity;
+    }
+    public void setEventQuantity(Integer EventQuantity) {
+        this.EventQuantity = EventQuantity;
+    }    
+    public String getcontact() {
+        return contact;
+    }
+    public void setcontact(String contact) {
+        this.contact = contact;
+    }
+    @Override
+    public int hashCode() {
+        return Event_Id;
+    }
+    public String getdate1() {
+        return date1;
+    }
+    public void setdate1(String date1) {
+        this.date1 = date1;
+    }
+    public String getTimeEvent() {
+        return TimeEvent;
+    }
+    public void setTimeEvent(String TimeEvent) {
+        this.TimeEvent = TimeEvent;
+    }
+    public String getname1() {
+        return name1;
+    }
+    
+    public void setname1(String name1) {
+        this.name1 = name1;}
+  
+    @Override
+    public boolean equals(Object obj) {
+        Event p=(Event) obj;
+        return Event_Id==p.Event_Id;
+    }    
+}
+
+class Event_Details{    
+   
+    private static List<Event> items=new ArrayList();
+   
+    
+    public static void addToEvent_Details(Event p){
+        items.add(p);
+    }
+    
+    public static void removeFromEvent_Details(Event p){        
+        items.remove(p);
+    }  
+  
+    public static void emptyEvent_Details(){        
+        items.clear();
+    }
+    
+    public static List<Event> getItems() {
+        return items;
+    }    
+}
+
+
+class Event_Details1{    
+   
+    private List<Event> items=new ArrayList();
+   
+    
+    public void addToEvent_Details(Event p){
+        items.add(p);
+    }
+    
+    public void removeFromEvent_Details(Event p){        
+        items.remove(p);
+    }  
+    
+    public void emptyEvent_Details(){        
+        items.clear();
+    }
+        public List<Event> getItems() {
+        return items;
+    }    
+}
+class Event_DetailsExtension extends Event_Details{
+    
+    enum PaymentStatus{
+        DONE, DUE, PARTIAL
+    };
+   
+    
+    private static PaymentStatus status;
+   
+    
+    private static String paymentMode;
+   
+    
+    private static Float paymentAmount=0F;
+   
+    
+    private static Date paymentDate;    
+   
+    
+    private static Float totalAmount=0F;
+   
+    
+    private static Float paymentDue=0F;
+   
+    
+  
+    public static void handlePayment(){
+        paymentMode=JOptionPane.showInputDialog("Enter Payment Mode(Cash/Cheque): ");
+        paymentDate=new Date();//current date
+        paymentAmount=new Float(JOptionPane.showInputDialog("Enter Amount, Total Due is: "+totalAmount));  
+        paymentDue=totalAmount-paymentAmount;            
+    }
+    
+    public static void confirmOrder(){
+        if(paymentDue==0.0){
+            status=PaymentStatus.DONE;
+        }else if(paymentDue>0.0 && paymentDue<totalAmount){
+            status=PaymentStatus.PARTIAL;
+        }else if(paymentAmount==0.0){
+            status=PaymentStatus.DUE;
+        }  
+        if(status==PaymentStatus.DONE || status==PaymentStatus.PARTIAL){
+           System.out.println("SUCCESS: Your order is confirmed and will be processed soon.");
+        }else if(status==PaymentStatus.DUE){
+            System.out.println("FAILED: Your order is failed. No payment done.");
+        }
+    }
+    public static void printEvent_Details(){        
+        System.out.println("==================================");
+        System.out.println("Event_Details ITEMS:");        
+        System.out.println("==================================");
+        for (Event p : getItems()) {
+            System.out.println("Event ID: "+p.getEvent_Id());
+            System.out.println("Event Event_name: "+p.getEvent_name());
+            System.out.println("Event PRICE: "+p.getPrice());
+            System.out.println("Event ORDER QTY: "+p.getEventQuantity());
+            System.out.println("Event time: "+p.getTimeEvent());
+            System.out.println("name of person "+p.getname1());
+            System.out.println("contact "+p.getcontact());
+            System.out.println("Event date "+p.getdate1());
+            Float total=p.getEventQuantity()* p.getPrice();
+            System.out.println("TOTAL: "+total);
+            totalAmount=totalAmount+total;
+            System.out.println();
+        }
+        System.out.println("==================================");
+        System.out.println("Net Total : "+totalAmount);
+        System.out.println("==================================");        
+    }    
+    
+    static void printPaymentSummary(){
+        System.out.println();
+        System.out.println("EVENT PAYMENT BILL DETAILS: ");  
+        System.out.println("==================================");
+        System.out.println("TOTAL AMOUNT: "+totalAmount);
+        System.out.println("PAYMENT AMOUNT: "+paymentAmount);
+        System.out.println("PAYMENT DUE: "+paymentDue);
+        System.out.println("PAYMENT MODE: "+paymentMode);
+        System.out.println("PAYMENT DATE: "+paymentDate);        
+        System.out.println("PAYMENT STATUS: "+status);
+    }
+}
+  
+
+class NewThread implements Runnable
+{
+  String name;
+  Thread t;
+  NewThread(String threadname)
+{
+  name=threadname;
+ t=new Thread(this,name);
+ System.out.println("New Thread"+t);
+t.start();
+}
+public void run()
+{
+Event_DetailsExtension.handlePayment();    
+ Event_DetailsExtension.confirmOrder();
+ Event_DetailsExtension.printPaymentSummary();
+ Event_DetailsExtension.emptyEvent_Details();//after confirmation of order empty the Event_Details
+}
+}
+
+public class prj3{
+    public static void main(String[] args) {
+       int no_of_events;
+        Event_DetailsExtension Event_Details1=new Event_DetailsExtension();
+        Scanner sc=new Scanner(System.in);
+        Event ev[]=new Event[20];
+        System.out.println("Enter no of events");
+        no_of_events=sc.nextInt();
+     
+        new NewThread("Event");
+        for(int i=0;i<no_of_events;i++)
+        {
+        	  ev[i]=new Event();
+        	  System.out.println("Enter event id");
+        	  int id=sc.nextInt();
+        	  ev[i].setEvent_Id(id); 
+        	  System.out.println("Enter event name");
+        	  String name=sc.next();
+        	  ev[i].setEvent_name(name);
+        	  System.out.println("Enter event price");
+        	  double p=(float) sc.nextDouble();
+        	  ev[i].setPrice(p);
+        	  System.out.println("Enter event quantity");
+        	  int q=sc.nextInt();
+        	  ev[i].setEventQuantity(q);
+        	  System.out.println("Enter event time");
+        	  String TimeEvent=sc.next();
+        	  ev[i].setTimeEvent(TimeEvent);
+        	  System.out.println("Enter contact number");
+        	  String contact=sc.next();
+        	  ev[i].setcontact(contact);
+        	  System.out.println("Enter the persons name");
+        	  String name1=sc.next();
+        	  ev[i].setname1(name1);
+        	  System.out.println("Enter the date");
+        	  String date1=sc.next();
+        	  ev[i].setdate1(date1);
+        	  
+        	  Event_Details.addToEvent_Details(ev[i]);  
+        	 
+        	 
+        	  
+        }
+       
+   	    
+   	   
+
+        	
+        
+        Event p=new Event(100);
+        Event_Details.addToEvent_Details(p);
+        Event_Details.removeFromEvent_Details(p);
+ 
+       
+       
+        Event_DetailsExtension.printEvent_Details();
+        
+        
+        
+    }    
+}
